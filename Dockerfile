@@ -1,28 +1,42 @@
-# Use an official Python runtime as a parent image
+# --- Stage 1: Build Frontend ---
+FROM node:18-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Copy frontend package files
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy frontend source code
+COPY frontend/ .
+
+# Build the frontend (outputs to /app/frontend/dist)
+RUN npm run build
+
+# --- Stage 2: Setup Backend ---
 FROM python:3.10-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Copy backend requirements
 COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
+# Install backend dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the backend code
+# Copy backend source code
 COPY MVP ./MVP
 
-# Copy the frontend build artifacts
-# Note: Ensure you run 'npm run build' locally before building this Docker image
-# or set up a multi-stage build. For simplicity, we assume dist exists.
-COPY frontend/dist ./frontend/dist
+# Copy built frontend assets from Stage 1
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# Expose the port the app runs on
+# Expose port
 EXPOSE 8000
 
-# Define environment variable
-ENV PORT=8000
-
-# Run uvicorn when the container launches
-CMD ["uvicorn", "MVP.server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the server
+# Use sh to allow variable expansion if needed, though direct exec is preferred for signal handling.
+# We hardcode port 8000 to match EXPOSE, but Render provides PORT env var.
+# We will use the shell form to allow $PORT usage if passed by Render.
+CMD uvicorn MVP.server:app --host 0.0.0.0 --port ${PORT:-8000}
