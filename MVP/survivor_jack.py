@@ -26,19 +26,9 @@ class SurvivorJack:
             base_url = None
             google_key = os.environ.get("GOOGLE_API_KEY") # Check Env first
             
-            key_path = os.path.join(os.path.dirname(__file__), 'api_key.txt')
-            if os.path.exists(key_path):
-                with open(key_path, 'r') as f:
-                    for line in f:
-                        line = line.strip()
-                        if line.startswith("OPENAI_API_KEY="):
-                            api_key = line.split("=", 1)[1]
-                        elif line.startswith("OPENAI_BASE_URL="):
-                            base_url = line.split("=", 1)[1]
-                        elif line.startswith("GOOGLE_API_KEY=") and not google_key:
-                            google_key = line.split("=", 1)[1]
+            # Legacy file check removed for security
             
-            # Priority: Google Key (Env/File) > OpenAI Key
+            # Priority: Google Key (Env) > OpenAI Key
             if google_key:
                 import google.generativeai as genai
                 genai.configure(api_key=google_key)
