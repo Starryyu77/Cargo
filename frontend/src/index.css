@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-900 text-crt-green font-mono overflow-hidden;
+  }
+}
+
+@layer components {
+  .crt-screen {
+    @apply relative overflow-hidden bg-crt-black border-4 border-zinc-800 rounded-lg shadow-[0_0_20px_rgba(51,255,51,0.2)];
+  }
+
+  .crt-screen::before {
+    content: " ";
+    @apply absolute inset-0 z-10 block pointer-events-none;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+  }
+
+  .crt-screen::after {
+    content: " ";
+    @apply absolute inset-0 z-10 block pointer-events-none bg-[rgba(18,16,16,0.1)] opacity-20 animate-scanline;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+  }
+}

@@ -1,0 +1,525 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://project-cargo.game/schemas/frontend-components.json",
+  "title": "FrontendComponentData",
+  "description": "Project: CARGO 前端组件数据结构 - 用于渲染交互式技术文档",
+  "document_tree": {
+    "type": "object",
+    "description": "文档树结构 - 章节-页面-段落层级",
+    "properties": {
+      "tree_id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "version": {
+        "type": "string"
+      },
+      "chapters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "chapter_id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "chapter_number": {
+              "type": "string"
+            },
+            "collapsed": {
+              "type": "boolean"
+            },
+            "pages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "page_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "page_number": {
+                    "type": "string"
+                  },
+                  "entry_ref": {
+                    "type": "string"
+                  },
+                  "paragraphs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "paragraph_id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "text",
+                            "heading",
+                            "list",
+                            "table",
+                            "diagram",
+                            "formula",
+                            "warning",
+                            "code"
+                          ]
+                        },
+                        "content_ref": {
+                          "type": "string"
+                        },
+                        "collapsible": {
+                          "type": "boolean"
+                        },
+                        "highlighted": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "search_index": {
+    "type": "object",
+    "description": "搜索索引数据结构",
+    "properties": {
+      "index_version": {
+        "type": "string"
+      },
+      "last_updated": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "total_entries": {
+        "type": "integer"
+      },
+      "categories": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "category_code": {
+              "type": "string"
+            },
+            "display_name": {
+              "type": "string"
+            },
+            "entry_count": {
+              "type": "integer"
+            },
+            "icon": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "entries": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "entry_id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "abstract": {
+              "type": "string"
+            },
+            "difficulty": {
+              "type": "integer"
+            },
+            "clearance": {
+              "type": "string"
+            },
+            "keywords": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "searchable_text": {
+              "type": "string"
+            },
+            "text_chunks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chunk_id": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "weight": {
+                    "type": "number"
+                  },
+                  "section": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "embedding_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "filters": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty_levels": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "clearance_levels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "interactive_diagram": {
+    "type": "object",
+    "description": "交互式图表数据结构",
+    "properties": {
+      "diagram_id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "diagram_type": {
+        "type": "string",
+        "enum": [
+          "schematic",
+          "cross_section",
+          "flow_chart",
+          "block_diagram",
+          "wiring_diagram",
+          "isometric",
+          "exploded_view",
+          "data_plot",
+          "interactive_3d"
+        ]
+      },
+      "base_svg": {
+        "type": "string"
+      },
+      "view_config": {
+        "type": "object",
+        "properties": {
+          "default_zoom": {
+            "type": "number"
+          },
+          "min_zoom": {
+            "type": "number"
+          },
+          "max_zoom": {
+            "type": "number"
+          },
+          "pan_enabled": {
+            "type": "boolean"
+          },
+          "zoom_enabled": {
+            "type": "boolean"
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "layer_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "visible": {
+                  "type": "boolean"
+                },
+                "opacity": {
+                  "type": "number"
+                },
+                "selectable": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "hotspots": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "hotspot_id": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "shape": {
+              "type": "string",
+              "enum": [
+                "rect",
+                "circle",
+                "polygon"
+              ]
+            },
+            "coordinates": {
+              "type": "object"
+            },
+            "tooltip": {
+              "type": "string"
+            },
+            "detail_content": {
+              "type": "string"
+            },
+            "linked_entry": {
+              "type": "string"
+            },
+            "highlight_color": {
+              "type": "string"
+            },
+            "animation": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "annotation_id": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "position": {
+              "type": "object"
+            },
+            "leader_line": {
+              "type": "boolean"
+            },
+            "style": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "data_binding": {
+        "type": "object",
+        "properties": {
+          "source_entry": {
+            "type": "string"
+          },
+          "dynamic_elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "element_id": {
+                  "type": "string"
+                },
+                "data_path": {
+                  "type": "string"
+                },
+                "display_format": {
+                  "type": "string"
+                },
+                "update_trigger": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "interactions": {
+        "type": "object",
+        "properties": {
+          "on_click": {
+            "type": "string"
+          },
+          "on_hover": {
+            "type": "string"
+          },
+          "on_double_click": {
+            "type": "string"
+          },
+          "context_menu": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "page_render_state": {
+    "type": "object",
+    "description": "页面渲染状态管理",
+    "properties": {
+      "current_entry": {
+        "type": "string"
+      },
+      "current_chapter": {
+        "type": "string"
+      },
+      "current_page": {
+        "type": "string"
+      },
+      "scroll_position": {
+        "type": "number"
+      },
+      "expanded_sections": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "highlighted_terms": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "active_filters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "difficulty": {
+            "type": "integer"
+          },
+          "clearance": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "reading_progress": {
+        "type": "object",
+        "properties": {
+          "percentage": {
+            "type": "number"
+          },
+          "time_spent": {
+            "type": "integer"
+          },
+          "sections_read": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "user_annotations": {
+    "type": "object",
+    "description": "用户书签和笔记数据",
+    "properties": {
+      "bookmarks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bookmark_id": {
+              "type": "string"
+            },
+            "entry_id": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "notes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "note_id": {
+              "type": "string"
+            },
+            "entry_id": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "is_private": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}

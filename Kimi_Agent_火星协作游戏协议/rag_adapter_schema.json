@@ -1,0 +1,432 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://project-cargo.game/schemas/rag-adapter.json",
+  "title": "RAGAdapter",
+  "description": "Project: CARGO RAG检索适配方案",
+  "text_chunking": {
+    "type": "object",
+    "description": "文本分块策略配置",
+    "properties": {
+      "strategy": {
+        "type": "string",
+        "enum": [
+          "semantic",
+          "fixed_size",
+          "hierarchical",
+          "hybrid"
+        ],
+        "description": "分块策略类型"
+      },
+      "config": {
+        "type": "object",
+        "properties": {
+          "chunk_size": {
+            "type": "integer",
+            "default": 512,
+            "description": "每个文本块的token数量"
+          },
+          "chunk_overlap": {
+            "type": "integer",
+            "default": 50,
+            "description": "相邻块之间的重叠token数"
+          },
+          "semantic_boundaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "语义边界标记（如段落标题）"
+          },
+          "hierarchy_levels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "integer"
+                },
+                "chunk_size": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "content_type_weights": {
+        "type": "object",
+        "description": "不同内容类型的权重配置",
+        "properties": {
+          "title": {
+            "type": "number",
+            "default": 2.0
+          },
+          "abstract": {
+            "type": "number",
+            "default": 1.5
+          },
+          "body": {
+            "type": "number",
+            "default": 1.0
+          },
+          "specs": {
+            "type": "number",
+            "default": 1.2
+          },
+          "procedure": {
+            "type": "number",
+            "default": 1.3
+          },
+          "lore": {
+            "type": "number",
+            "default": 0.8
+          },
+          "warning": {
+            "type": "number",
+            "default": 1.4
+          }
+        }
+      }
+    }
+  },
+  "vector_embedding": {
+    "type": "object",
+    "description": "向量嵌入配置",
+    "properties": {
+      "embedding_model": {
+        "type": "string",
+        "description": "使用的嵌入模型"
+      },
+      "vector_dimension": {
+        "type": "integer",
+        "default": 768,
+        "description": "向量维度"
+      },
+      "fields_to_embed": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "field_path": {
+              "type": "string"
+            },
+            "field_name": {
+              "type": "string"
+            },
+            "weight": {
+              "type": "number"
+            },
+            "preprocessing": {
+              "type": "string"
+            }
+          }
+        },
+        "default": [
+          {
+            "field_path": "title.full",
+            "field_name": "标题",
+            "weight": 2.0
+          },
+          {
+            "field_path": "technical_content.abstract",
+            "field_name": "摘要",
+            "weight": 1.5
+          },
+          {
+            "field_path": "technical_content.description.overview",
+            "field_name": "概述",
+            "weight": 1.2
+          },
+          {
+            "field_path": "tags",
+            "field_name": "标签",
+            "weight": 1.3
+          },
+          {
+            "field_path": "keywords",
+            "field_name": "关键词",
+            "weight": 1.4
+          }
+        ]
+      },
+      "chunk_embedding": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "store_in_entry": {
+            "type": "boolean",
+            "default": false
+          },
+          "external_storage": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "metadata_filtering": {
+    "type": "object",
+    "description": "元数据过滤配置",
+    "properties": {
+      "filterable_fields": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "string",
+                "number",
+                "array",
+                "boolean",
+                "date"
+              ]
+            },
+            "operators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "facetable": {
+              "type": "boolean"
+            }
+          }
+        },
+        "default": [
+          {
+            "field": "category.primary",
+            "type": "string",
+            "operators": [
+              "eq",
+              "in"
+            ],
+            "facetable": true
+          },
+          {
+            "field": "difficulty_level.technical",
+            "type": "number",
+            "operators": [
+              "eq",
+              "gt",
+              "lt",
+              "range"
+            ],
+            "facetable": true
+          },
+          {
+            "field": "difficulty_level.required_clearance",
+            "type": "string",
+            "operators": [
+              "eq",
+              "in"
+            ],
+            "facetable": true
+          },
+          {
+            "field": "tags",
+            "type": "array",
+            "operators": [
+              "contains",
+              "in"
+            ],
+            "facetable": true
+          },
+          {
+            "field": "version_info.status",
+            "type": "string",
+            "operators": [
+              "eq"
+            ],
+            "facetable": false
+          },
+          {
+            "field": "metadata.last_modified",
+            "type": "date",
+            "operators": [
+              "gt",
+              "lt",
+              "range"
+            ],
+            "facetable": false
+          }
+        ]
+      },
+      "predefined_filters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "filter_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "object"
+            }
+          }
+        },
+        "default": [
+          {
+            "filter_id": "beginner-friendly",
+            "name": "入门级内容",
+            "description": "技术难度1-2的内容",
+            "conditions": {
+              "difficulty_level.technical": {
+                "lte": 2
+              }
+            }
+          },
+          {
+            "filter_id": "approved-only",
+            "name": "已批准文档",
+            "description": "仅显示已批准的正式文档",
+            "conditions": {
+              "version_info.status": "APPROVED"
+            }
+          },
+          {
+            "filter_id": "power-systems",
+            "name": "动力系统",
+            "description": "所有动力相关文档",
+            "conditions": {
+              "category.primary": "PWR"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "retrieval_result": {
+    "type": "object",
+    "description": "RAG检索结果格式",
+    "properties": {
+      "query_id": {
+        "type": "string"
+      },
+      "query_text": {
+        "type": "string"
+      },
+      "results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "rank": {
+              "type": "integer"
+            },
+            "entry_id": {
+              "type": "string"
+            },
+            "entry_title": {
+              "type": "string"
+            },
+            "chunk_id": {
+              "type": "string"
+            },
+            "chunk_content": {
+              "type": "string"
+            },
+            "chunk_type": {
+              "type": "string"
+            },
+            "score": {
+              "type": "number"
+            },
+            "vector_score": {
+              "type": "number"
+            },
+            "keyword_score": {
+              "type": "number"
+            },
+            "metadata_match": {
+              "type": "object"
+            },
+            "highlighted_snippet": {
+              "type": "string"
+            },
+            "relevant_sections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "context_chunks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "aggregations": {
+        "type": "object",
+        "properties": {
+          "by_category": {
+            "type": "object"
+          },
+          "by_difficulty": {
+            "type": "object"
+          },
+          "by_clearance": {
+            "type": "object"
+          }
+        }
+      },
+      "suggested_queries": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "context_assembly": {
+    "type": "object",
+    "description": "检索结果上下文组装配置",
+    "properties": {
+      "max_context_length": {
+        "type": "integer",
+        "default": 4000,
+        "description": "最大上下文长度（token数）"
+      },
+      "assembly_strategy": {
+        "type": "string",
+        "enum": [
+          "sequential",
+          "relevance_ranked",
+          "hierarchical"
+        ],
+        "default": "relevance_ranked"
+      },
+      "include_metadata": {
+        "type": "boolean",
+        "default": true
+      },
+      "include_source_links": {
+        "type": "boolean",
+        "default": true
+      },
+      "format_template": {
+        "type": "string",
+        "default": "\n[文档: {entry_title}]\n[分类: {category}]\n[相关度: {score}]\n\n{chunk_content}\n\n---\n"
+      }
+    }
+  }
+}

@@ -1,0 +1,703 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://project-cargo.game/schemas/technical-manual-entry.json",
+  "title": "TechnicalManualEntry",
+  "description": "Project: CARGO 技术资料库条目 - 模仿NASA技术手册风格的交互式文档数据结构",
+  "type": "object",
+  "required": [
+    "entry_id",
+    "category",
+    "title",
+    "technical_content",
+    "version_info",
+    "metadata"
+  ],
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "description": "唯一标识符，格式: [CATEGORY]-[SUBCATEGORY]-[NUMBER]-[REV]",
+      "pattern": "^[A-Z]{2,4}-[A-Z]{2,4}-\\d{3,5}-REV[\\dA-Z]$",
+      "examples": [
+        "PWR-RTG-0042-REVC",
+        "CHEM-SYN-0187-REVB"
+      ]
+    },
+    "legacy_id": {
+      "type": "string",
+      "description": "旧版文档编号（用于向后兼容）"
+    },
+    "category": {
+      "type": "object",
+      "required": [
+        "primary",
+        "code"
+      ],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "enum": [
+            "PWR",
+            "CHEM",
+            "MECH",
+            "MED",
+            "ELEC",
+            "NAV",
+            "ENV",
+            "COM"
+          ],
+          "description": "主分类: 动力/化学/机械/医疗/电子/导航/环境/通信"
+        },
+        "secondary": {
+          "type": "string",
+          "description": "子分类"
+        },
+        "code": {
+          "type": "string",
+          "description": "分类代码"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "显示名称"
+        }
+      }
+    },
+    "title": {
+      "type": "object",
+      "required": [
+        "full",
+        "short"
+      ],
+      "properties": {
+        "full": {
+          "type": "string",
+          "description": "完整标题"
+        },
+        "short": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "短标题（用于导航）"
+        },
+        "document_number": {
+          "type": "string",
+          "description": "文档编号"
+        }
+      }
+    },
+    "technical_content": {
+      "type": "object",
+      "required": [
+        "description"
+      ],
+      "properties": {
+        "abstract": {
+          "type": "string",
+          "description": "技术摘要（用于快速预览）"
+        },
+        "description": {
+          "type": "object",
+          "required": [
+            "overview"
+          ],
+          "properties": {
+            "overview": {
+              "type": "string",
+              "description": "概述"
+            },
+            "principles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "工作原理段落列表"
+            },
+            "applications": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "应用场景"
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "限制条件"
+            }
+          }
+        },
+        "diagrams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "diagram_id",
+              "type"
+            ],
+            "properties": {
+              "diagram_id": {
+                "type": "string",
+                "description": "图纸唯一ID"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "schematic",
+                  "cross_section",
+                  "flow_chart",
+                  "block_diagram",
+                  "wiring_diagram",
+                  "isometric",
+                  "exploded_view",
+                  "data_plot"
+                ],
+                "description": "图纸类型"
+              },
+              "title": {
+                "type": "string",
+                "description": "图纸标题"
+              },
+              "source": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "svg",
+                      "png",
+                      "jpg",
+                      "interactive_svg",
+                      "canvas"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "svg_content": {
+                    "type": "string",
+                    "description": "内联SVG内容"
+                  },
+                  "interactive_config": {
+                    "type": "object",
+                    "description": "交互式图表配置"
+                  }
+                }
+              },
+              "annotations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "hotspot": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "图纸标注"
+              },
+              "callouts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "related_part": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "specifications": {
+          "type": "object",
+          "properties": {
+            "tables": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "table_id",
+                  "title",
+                  "rows"
+                ],
+                "properties": {
+                  "table_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "subtitle": {
+                    "type": "string"
+                  },
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "header": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "string"
+                        },
+                        "data_type": {
+                          "type": "string",
+                          "enum": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "range"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "rows": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "notes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "formulas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "formula_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "latex": {
+                "type": "string",
+                "description": "LaTeX格式公式"
+              },
+              "plain_text": {
+                "type": "string",
+                "description": "纯文本描述"
+              },
+              "variables": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "safety_warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "level",
+              "message"
+            ],
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": [
+                  "DANGER",
+                  "WARNING",
+                  "CAUTION",
+                  "NOTICE"
+                ],
+                "description": "警告级别"
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "conditions": {
+                "type": "string"
+              },
+              "consequences": {
+                "type": "string"
+              },
+              "mitigation": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "procedures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "procedure_id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "installation",
+                  "operation",
+                  "maintenance",
+                  "emergency",
+                  "calibration",
+                  "inspection"
+                ]
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "step_number": {
+                      "type": "integer"
+                    },
+                    "instruction": {
+                      "type": "string"
+                    },
+                    "caution_refs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tool_required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "verification": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "prerequisites": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lore_snippet": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "log_entry",
+                "memo",
+                "transcript",
+                "note",
+                "archive"
+              ]
+            },
+            "author": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "classification": {
+              "type": "string"
+            }
+          }
+        },
+        "unlock_condition": {
+          "type": "string"
+        },
+        "related_characters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "检索标签"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "关键词（用于搜索）"
+    },
+    "difficulty_level": {
+      "type": "object",
+      "properties": {
+        "technical": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "技术难度 1-5"
+        },
+        "comprehension": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "理解难度 1-5"
+        },
+        "required_clearance": {
+          "type": "string",
+          "enum": [
+            "PUBLIC",
+            "RESTRICTED",
+            "CONFIDENTIAL",
+            "SECRET",
+            "TOP_SECRET"
+          ]
+        }
+      }
+    },
+    "related_entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entry_id": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "prerequisite",
+              "supersedes",
+              "component_of",
+              "requires",
+              "references",
+              "similar_to",
+              "contrasts_with"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "version_info": {
+      "type": "object",
+      "required": [
+        "revision",
+        "status"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "REVIEW",
+            "APPROVED",
+            "SUPERSEDED",
+            "OBSOLETE"
+          ]
+        },
+        "effective_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "change_summary": {
+          "type": "string"
+        },
+        "approver": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "created_date",
+        "last_modified",
+        "author"
+      ],
+      "properties": {
+        "created_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "author": {
+          "type": "string"
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "department": {
+          "type": "string"
+        },
+        "classification": {
+          "type": "string"
+        },
+        "distribution": {
+          "type": "string"
+        },
+        "page_count": {
+          "type": "integer"
+        },
+        "word_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "rag_index": {
+      "type": "object",
+      "description": "RAG检索专用索引数据",
+      "properties": {
+        "text_chunks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chunk_id": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "chunk_type": {
+                "type": "string",
+                "enum": [
+                  "title",
+                  "abstract",
+                  "body",
+                  "specs",
+                  "procedure",
+                  "lore"
+                ]
+              },
+              "embedding_id": {
+                "type": "string"
+              },
+              "token_count": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "embedding_vector": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "向量嵌入（运行时填充）"
+        },
+        "searchable_text": {
+          "type": "string",
+          "description": "合并的可搜索文本"
+        }
+      }
+    }
+  }
+}
